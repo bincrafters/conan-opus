@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from conans import ConanFile, tools, VisualStudioBuildEnvironment
+from conans import ConanFile, tools, VisualStudioBuildEnvironment, AutoToolsBuildEnvironment
 import os
 
 
@@ -46,6 +46,28 @@ class OpusConan(ConanFile):
                 build_command = tools.build_sln_command(self.settings, "opus.sln", build_type = btype).replace("x86", "Win32") 
                 self.output.info("Build command: %s" % build_command)
                 self.run("%s && %s && %s" % (vcvars, cd_build, build_command))
+        else:
+            base_path = ("%s/" % self.conanfile_directory) if self.settings.os != "Windows" else ""
+            cd_build = "cd %s%s" % (base_path, self.sources_dir)
+            
+            env = AutoToolsBuildEnvironment(self)
+
+            if self.settings.os != "Windows":
+                env.fpic = self.options.fPIC
+                
+            with tools.environment_append(env.vars):
+
+                if self.settings.os == "Macos":
+                    old_str = '-install_name \\$rpath/\\$soname'
+                    new_str = '-install_name \\$soname'
+                    tools.replace_in_file("%s/%s/configure" % (self.conanfile_directory, self.sources_dir), old_str, new_str)
+
+                if self.settings.os == "Windows":
+                    tools.run_in_windows_bash(self, "%s && ./configure%s" % (cd_build, " --enable-fixed-point" if self.options.fixed_point else ""))
+                    tools.run_in_windows_bash(self, "%s && make" % cd_build)
+                else:
+                    self.run("%s && chmod +x ./configure && ./configure%s" % (cd_build, " --enable-fixed-point" if self.options.fixed_point else ""))
+                    self.run("%s && make" % cd_build)
 
     def package(self):
         with tools.chdir("sources"):
