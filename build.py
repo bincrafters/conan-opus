@@ -69,4 +69,10 @@ if __name__ == "__main__":
         stable_branch_pattern="stable/*")
 
     builder.add_common_builds(shared_option_name=name + ":shared")
+
+    builds_no_vs_12 = []
+    for settings, options, env_vars, build_requires in builder.builds:
+        if not (settings["compiler"] == "Visual Studio" and settings["compiler.version"] == "12"):
+            builds_no_vs12.append([settings, options, env_vars, build_requires])
+    builder.builds = builds_no_vs_12
     builder.run()
