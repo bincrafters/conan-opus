@@ -12,7 +12,7 @@ class OpusConan(ConanFile):
     description = "Opus is a totally open, royalty-free, highly versatile audio codec."
     sources_dir = "sources"
     license = "https://opus-codec.org/license/"
-    exports_sources = ["LICENSE"]
+    exports_sources = ["LICENSE.md"]
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False], "fPIC": [True, False], "fixed_point": [True, False]}
     default_options = "shared=False", "fPIC=True", "fixed_point=False"

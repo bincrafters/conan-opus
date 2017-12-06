@@ -1,26 +1,26 @@
-[ ![Download](https://api.bintray.com/packages/bincrafters/public-conan/somelib%3Abincrafters/images/download.svg) ](https://bintray.com/bincrafters/public-conan/somelib%3Abincrafters/_latestVersion)
-[![Build Status](https://travis-ci.org/bincrafters/conan-somelib.svg?branch=stable%2F0.0.0)](https://travis-ci.org/bincrafters/conan-somelib)
-[![Build status](https://ci.appveyor.com/api/projects/status/sxs9n6vb8nqa92l5?svg=true)](https://ci.appveyor.com/project/BinCrafters/conan-somelib)
+[![Download](https://api.bintray.com/packages/bincrafters/public-conan/opus%3Abincrafters/images/download.svg) ](https://bintray.com/bincrafters/public-conan/opus%3Abincrafters/_latestVersion)
+[![Build Status](https://travis-ci.org/bincrafters/conan-opus.svg?branch=stable%2F1.2.1)](https://travis-ci.org/bincrafters/conan-opus)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/bincrafters/conan-opus?branch=stable%2F1.2.1&svg=true)](https://ci.appveyor.com/project/bincrafters/conan-opus)
 
-[Conan.io](https://conan.io) package for [somelib](https://github.com/someauthor/somelib) project
+[Conan.io](https://conan.io) package recipe for *opus*.
 
-The packages generated with this **conanfile** can be found in [Bintray](https://bintray.com/bincrafters/public-conan/somelib%3Abincrafters).
+Opus is a totally open, royalty-free, highly versatile audio codec.
+
+The packages generated with this **conanfile** can be found on [Bintray](https://bintray.com/bincrafters/public-conan/opus%3Abincrafters).
 
 ## For Users: Use this package
 
 ### Basic setup
 
-    $ conan install somelib/0.0.0@bincrafters/stable
+    $ conan install opus/1.2.1@bincrafters/stable
 
 ### Project setup
 
 If you handle multiple dependencies in your project is better to add a *conanfile.txt*
 
     [requires]
-    somelib/0.0.0@bincrafters/stable
+    opus/1.2.1@bincrafters/stable
 
-    [generators]
-    txt
 
 Complete the installation of requirements for your project running:
 
@@ -38,13 +38,26 @@ The following command both runs all the steps of the conan file, and publishes t
 
     $ conan create bincrafters/stable
 
+
+### Available Options
+| Option        | Default | Possible Values  |
+| ------------- |:----------------- |:------------:|
+| shared      | False |  [True, False] |
+| fPIC      | True |  [True, False] |
+| fixed_point      | False |  [True, False] |
+
 ## Add Remote
 
     $ conan remote add bincrafters "https://api.bintray.com/conan/bincrafters/public-conan"
 
 ## Upload
 
-    $ conan upload somelib/0.0.0@bincrafters/stable --all -r bincrafters
+    $ conan upload opus/1.2.1@bincrafters/stable --all -r bincrafters
 
-## License
-[LICENSE_TYPE](LICENSE)
+
+## Conan Recipe License
+
+NOTE: The conan recipe license applies only to the files of this recipe, which can be used to build and package opus.
+It does *not* in any way apply or is related to the actual software being packaged.
+
+[MIT](git@github.com:dimi309/conan-opus/blob/master/LICENSE.md)
