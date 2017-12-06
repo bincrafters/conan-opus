@@ -44,7 +44,9 @@ The following command both runs all the steps of the conan file, and publishes t
 | ------------- |:----------------- |:------------:|
 | shared      | False |  [True, False] |
 | fPIC      | True |  [True, False] |
-| fixed_point      | False |  [True, False] |
+| fixed_point      | False |  [True, False] | 
+
+*On Windows, fixed_point only has an effect when shared=True (building DLLs). Otherwise, just define FIXED_POINT in your program in order to compile with fixed-point opus.*
 
 ## Add Remote
 
