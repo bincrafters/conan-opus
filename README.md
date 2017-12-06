@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/bincrafters/conan-opus.svg?branch=stable%2F1.2.1)](https://travis-ci.org/bincrafters/conan-opus)
 [![Build status](https://ci.appveyor.com/api/projects/status/github/bincrafters/conan-opus?branch=stable%2F1.2.1&svg=true)](https://ci.appveyor.com/project/bincrafters/conan-opus)
 
-[Conan.io](https://conan.io) package recipe for *opus*.
+[Conan.io](https://conan.io) package recipe for [opus](https://opus-codec.org/).
 
 Opus is a totally open, royalty-free, highly versatile audio codec.
 
