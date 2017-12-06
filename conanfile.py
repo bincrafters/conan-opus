@@ -12,7 +12,7 @@ class OpusConan(ConanFile):
     description = "Opus is a totally open, royalty-free, highly versatile audio codec."
     sources_dir = "sources"
     license = "https://opus-codec.org/license/"
-    exports_sources = ["LICENSE.md"]
+    exports_sources = ["LICENSE.md", "FindOPUS.cmake"]
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False], "fPIC": [True, False], "fixed_point": [True, False]}
     default_options = "shared=False", "fPIC=True", "fixed_point=False"
@@ -70,6 +70,7 @@ class OpusConan(ConanFile):
                     self.run("%s && make" % cd_build)
 
     def package(self):
+        self.copy("FindOPUS.cmake", ".", ".")
         with tools.chdir("sources"):
             self.copy("COPYING", dst="licenses", src=self.sources_dir, keep_path=False)
             self.copy(pattern="*", dst="include", src="%s/include" % self.sources_dir, keep_path=False)
@@ -77,9 +78,11 @@ class OpusConan(ConanFile):
             if self.settings.build_type == "Debug" and self.settings.compiler == "Visual Studio":
                 self.copy(pattern="*pus.pdb", dst="bin", keep_path=False) # Without the *pus.pdb pattern, e.g. if we use "opus.pdb" or "opus.*" copy doesn't work on conan 0.29.2 (conan bug?)
             self.copy(pattern="*.lib", dst="lib", keep_path=False)
-            self.copy(pattern="*.a", dst="lib", keep_path=False)
-            self.copy(pattern="*.so*", dst="lib", keep_path=False)
-            self.copy(pattern="*.dylib", dst="lib", keep_path=False)
+            if self.options.shared:
+                self.copy(pattern="*.so*", dst="lib", keep_path=False)
+                self.copy(pattern="*.dylib", dst="lib", keep_path=False)
+            else:
+                self.copy(pattern="*.a", dst="lib", keep_path=False)
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
