@@ -19,6 +19,10 @@ class OpusConan(ConanFile):
     requires = ""
 
     def configure(self):
+
+        if self.settings.os == "Windows" and (self.settings.compiler != "Visual Studio" or int(self.settings.compiler.version.__str__()) < 14):
+            raise tools.ConanException("On Windows, the opus package can only be built with the Visual Studio 2015 or higher.")
+        
         del self.settings.compiler.libcxx
 
         if self.settings.os == "Windows":
