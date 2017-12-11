@@ -30,7 +30,6 @@ class OpusConan(ConanFile):
 
         if self.settings.compiler == "Visual Studio" and not self.options.shared:
             self.options.remove("fixed_point")
-            
 
     def source(self):
         source_url = "https://archive.mozilla.org/pub/opus"
@@ -70,8 +69,17 @@ class OpusConan(ConanFile):
                     tools.run_in_windows_bash(self, "%s && ./configure%s" % (cd_build, " --enable-fixed-point" if self.options.fixed_point else ""))
                     tools.run_in_windows_bash(self, "%s && make" % cd_build)
                 else:
-                    self.run("%s && chmod +x ./configure && ./configure%s" % (cd_build, " --enable-fixed-point" if self.options.fixed_point else ""))
+                    configure_options = " --prefix=%s" % self.package_folder
+                    if self.options.fixed_point:
+                        configure_options += " --enable-fixed-point"
+                    if self.options.shared:
+                        configure_options += " --disable-static --enable-shared"
+                    else:
+                        configure_options += " --disable-shared --enable-static"
+                    self.run("%s && chmod +x ./configure" % cd_build)
+                    self.run("%s && ./configure%s" % (cd_build, configure_options))
                     self.run("%s && make" % cd_build)
+                    self.run("%s && make install" % cd_build)
 
     def package(self):
         self.copy("FindOPUS.cmake", ".", ".")
@@ -82,11 +90,6 @@ class OpusConan(ConanFile):
             if self.settings.build_type == "Debug" and self.settings.compiler == "Visual Studio":
                 self.copy(pattern="*pus.pdb", dst="bin", keep_path=False) # Without the *pus.pdb pattern, e.g. if we use "opus.pdb" or "opus.*" copy doesn't work on conan 0.29.2 (conan bug?)
             self.copy(pattern="*.lib", dst="lib", keep_path=False)
-            if self.options.shared:
-                self.copy(pattern="*.so*", dst="lib", keep_path=False)
-                self.copy(pattern="*.dylib", dst="lib", keep_path=False)
-            else:
-                self.copy(pattern="*.a", dst="lib", keep_path=False)
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
