@@ -22,7 +22,7 @@ class OpusConan(ConanFile):
     default_options = "shared=False", "fPIC=True", "fixed_point=False"
 
     # Custom attributes for Bincrafters recipe conventions
-    source_subfolder = "source_subfolder"
+    source_subfolder = "sources"
     install_subfolder = "install"
 
     def configure(self):
@@ -87,13 +87,13 @@ class OpusConan(ConanFile):
     def package(self):
         self.copy("FindOPUS.cmake", ".", ".")
         self.copy("COPYING", dst="licenses", src=self.source_subfolder, keep_path=False)
-        self.copy(pattern="*", dst="include", src="install/include", keep_path=False)
-        self.copy(pattern="*.dll", dst="bin", src="install/bin", keep_path=False)
-        self.copy(pattern="*.lib", dst="lib", src="install/lib", keep_path=False)
-        self.copy(pattern="*.a", dst="lib", src="install/lib", keep_path=False)
-        self.copy(pattern="*.so*", dst="lib", src="install/lib", keep_path=False)
-        self.copy(pattern="*.dylib", dst="lib", src="install/lib", keep_path=False)
-        self.copy("*.*", dst="lib/pkgconfig", src="install/lib/pkgconfig")
+        self.copy(pattern="*", dst="include", src=os.path.join(self.install_subfolder, "include"), keep_path=False)
+        self.copy(pattern="*.dll", dst="bin", src=os.path.join(self.install_subfolder, "bin"), keep_path=False)
+        self.copy(pattern="*.lib", dst="lib", src=os.path.join(self.install_subfolder, "lib"), keep_path=False)
+        self.copy(pattern="*.a", dst="lib", src=os.path.join(self.install_subfolder, "lib"), keep_path=False)
+        self.copy(pattern="*.so*", dst="lib", src=os.path.join(self.install_subfolder, "lib"), keep_path=False)
+        self.copy(pattern="*.dylib", dst="lib", src=os.path.join(self.install_subfolder, "lib"), keep_path=False)
+        self.copy("*.*", dst="lib/pkgconfig", src=os.path.join(self.install_subfolder, "lib", "pkgconfig"))
         if self.settings.build_type == "Debug" and self.settings.compiler == "Visual Studio":
             # Without the *pus.pdb pattern, e.g. if we use "opus.pdb" or "opus.*" copy doesn't work on conan 0.29.2 (conan bug?)
             self.copy(pattern="*pus.pdb", dst="bin", keep_path=False)
