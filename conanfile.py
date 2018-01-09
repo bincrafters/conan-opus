@@ -55,7 +55,7 @@ class OpusConan(ConanFile):
                     # using the build_type parameter on conan 0.29.2 (conan bug?)
                     build_command = tools.build_sln_command(self.settings, "opus.sln", build_type = btype).replace("x86", "Win32")
                     self.output.info("Build command: %s" % build_command)
-                    self.run("%s && && %s" % (vcvars, build_command))
+                    self.run("%s && %s" % (vcvars, build_command))
         else:
             env = AutoToolsBuildEnvironment(self)
 
