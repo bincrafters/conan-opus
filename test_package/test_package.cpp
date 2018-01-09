@@ -1,8 +1,8 @@
 #include "opus.h"
+#include <iostream>
 
 int main()
 {
-  OpusDecoder *dec;
-  dec = nullptr;
+  std::cout << opus_get_version_string() << std::endl;
   return 0;
 }
