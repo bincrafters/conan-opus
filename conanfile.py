@@ -12,7 +12,7 @@ class OpusConan(ConanFile):
     description = "Opus is a totally open, royalty-free, highly versatile audio codec."
 
     author = "Bincrafters <bincrafters@gmail.com>"
-    license = "https://opus-codec.org/license/"
+    license = "BSD 3-Clause"
     website = "https://opus-codec.org"
     exports = ["LICENSE.md"]
     exports_sources = ["FindOPUS.cmake"]
