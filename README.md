@@ -1,8 +1,8 @@
 ## Package Status
 
-| Bintray | Windows | Linux | Macos |
-|---------|------------|--------|------|
-|[![Download](https://api.bintray.com/packages/bincrafters/public-conan/opus%3Abincrafters/images/download.svg) ](https://bintray.com/bincrafters/public-conan/opus%3Abincrafters/_latestVersion)| [![Build status](https://ci.appveyor.com/api/projects/status/tfkqiywc052qeh9?svg=true)](https://ci.appveyor.com/project/bincrafters/conan-opus)| [![Build Status](https://travis-ci.org/bincrafters/conan-opus.svg?branch=stable%2F1.2.1)](https://travis-ci.org/bincrafters/conan-opus)| [![CircleCI](https://circleci.com/gh/bincrafters/conan-opus.svg?style=svg)](https://circleci.com/gh/bincrafters/conan-opus) |
+| Bintray | Windows | Linux & macOS |
+|:--------:|:---------:|:-----------------:|
+|[![Download](https://api.bintray.com/packages/bincrafters/public-conan/opus%3Abincrafters/images/download.svg) ](https://bintray.com/bincrafters/public-conan/opus%3Abincrafters/_latestVersion)| [![Build status](https://ci.appveyor.com/api/projects/status/github/bincrafters/conan-opus?svg=true)](https://ci.appveyor.com/project/bincrafters/conan-opus)| [![Build Status](https://travis-ci.org/bincrafters/conan-opus.svg?branch=stable%2F1.2.1)](https://travis-ci.org/bincrafters/conan-opus)|
 
 ## Conan.io Information
 
@@ -39,9 +39,7 @@ The contents of this GIT repository are completely separate from the software be
     ~/.conan/data/<pkg_name>/<pkg_version>/bincrafters/package/<random_package_id>/license/<LICENSE_FILES_HERE>
 
 *Note :   The most common filenames for OSS licenses are `LICENSE` AND `COPYING` without file extensions.*
-	
+
 ### License for Bincrafters recipe:
 
     ~/.conan/data/<pkg_name>/<pkg_version>/bincrafters/export/LICENSE.md
-
-	
