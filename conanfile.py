@@ -11,9 +11,8 @@ class OpusConan(ConanFile):
     url = "https://opus-codec.org/"
     description = "Opus is a totally open, royalty-free, highly versatile audio codec."
 
-    author = "Bincrafters <bincrafters@gmail.com>"
     license = "BSD 3-Clause"
-    website = "https://opus-codec.org"
+    homepage = "https://opus-codec.org"
     exports = ["LICENSE.md"]
     exports_sources = ["FindOPUS.cmake"]
 
