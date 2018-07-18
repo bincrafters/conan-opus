@@ -3,6 +3,7 @@
 
 from conans import ConanFile, tools, VisualStudioBuildEnvironment, AutoToolsBuildEnvironment
 import os
+import shutil
 
 
 class OpusConan(ConanFile):
@@ -45,6 +46,11 @@ class OpusConan(ConanFile):
 
     def build(self):
         if self.settings.compiler == "Visual Studio":
+            with tools.chdir(self.source_subfolder):
+                pc_build = 'fixed-point' if self.options.shared and self.options.fixed_point else 'floating-point'
+                shutil.copy('opus.pc.in', 'opus.pc')
+                tools.replace_in_file('opus.pc', '@VERSION@', self.version)
+                tools.replace_in_file('opus.pc', '@PC_BUILD@', pc_build)
             env = VisualStudioBuildEnvironment(self)
             with tools.environment_append(env.vars):
                 with tools.chdir(os.path.join(self.source_subfolder, "win32", "VS2015")):
@@ -100,6 +106,8 @@ class OpusConan(ConanFile):
         if self.settings.build_type == "Debug" and self.settings.compiler == "Visual Studio":
             # Without the *pus.pdb pattern, e.g. if we use "opus.pdb" or "opus.*" copy doesn't work on conan 0.29.2 (conan bug?)
             self.copy(pattern="*pus.pdb", dst="bin", keep_path=False)
+        if self.settings.compiler == 'Visual Studio':
+            self.copy("*.pc", dst=os.path.join("lib, pkgconfig"), src=base_folder)
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
