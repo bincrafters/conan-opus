@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from conans import ConanFile, tools, VisualStudioBuildEnvironment, AutoToolsBuildEnvironment
+from conans import ConanFile, tools, AutoToolsBuildEnvironment, MSBuild
 import os
 import shutil
 
@@ -51,16 +51,11 @@ class OpusConan(ConanFile):
                 shutil.copy('opus.pc.in', 'opus.pc')
                 tools.replace_in_file('opus.pc', '@VERSION@', self.version)
                 tools.replace_in_file('opus.pc', '@PC_BUILD@', pc_build)
-            env = VisualStudioBuildEnvironment(self)
-            with tools.environment_append(env.vars):
-                with tools.chdir(os.path.join(self.source_subfolder, "win32", "VS2015")):
-                    vcvars = tools.vcvars_command(self.settings)
-                    btype = "%s%s%s" % (self.settings.build_type, "DLL" if self.options.shared else "", "_fixed" if self.options.shared and self.options.fixed_point else "")
-                    # Instead of using "replace" here below, would we could add the "arch" parameter, but it doesn't work when we are also
-                    # using the build_type parameter on conan 0.29.2 (conan bug?)
-                    build_command = tools.build_sln_command(self.settings, "opus.sln", build_type = btype).replace("x86", "Win32")
-                    self.output.info("Build command: %s" % build_command)
-                    self.run("%s && %s" % (vcvars, build_command))
+            with tools.chdir(os.path.join(self.source_subfolder, "win32", "VS2015")):
+                btype = "%s%s%s" % (self.settings.build_type, "DLL" if self.options.shared else "",
+                                    "_fixed" if self.options.shared and self.options.fixed_point else "")
+                msbuild = MSBuild(self)
+                msbuild.build('opus.sln', build_type=btype, platforms={"x86": "Win32"})
         else:
             env = AutoToolsBuildEnvironment(self)
 
