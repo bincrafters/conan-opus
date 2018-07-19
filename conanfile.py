@@ -26,8 +26,9 @@ class OpusConan(ConanFile):
     install_subfolder = "install"
 
     def configure(self):
-        if self.settings.os == "Windows" and (self.settings.compiler != "Visual Studio" or int(self.settings.compiler.version.__str__()) < 14):
-            raise tools.ConanException("On Windows, the opus package can only be built with the Visual Studio 2015 or higher.")
+        if self.settings.os == "Windows" and (self.settings.compiler != "Visual Studio" or int(str(self.settings.compiler.version)) < 14):
+            raise tools.ConanException("On Windows, the opus package can only be built with the "
+                                       "Visual Studio 2015 or higher.")
 
     def config_options(self):
         del self.settings.compiler.libcxx
@@ -44,16 +45,22 @@ class OpusConan(ConanFile):
         extracted_dir = self.name + "-" + self.version
         os.rename(extracted_dir, self.source_subfolder)
 
+    @property
+    def fixed_point(self):
+        if self.settings.compiler == 'Visual Studio' and not self.options.shared:
+            return False
+        return self.options.fixed_point
+
     def build(self):
         if self.settings.compiler == "Visual Studio":
             with tools.chdir(self.source_subfolder):
-                pc_build = 'fixed-point' if self.options.shared and self.options.fixed_point else 'floating-point'
+                pc_build = 'fixed-point' if self.fixed_point else 'floating-point'
                 shutil.copy('opus.pc.in', 'opus.pc')
                 tools.replace_in_file('opus.pc', '@VERSION@', self.version)
                 tools.replace_in_file('opus.pc', '@PC_BUILD@', pc_build)
             with tools.chdir(os.path.join(self.source_subfolder, "win32", "VS2015")):
                 btype = "%s%s%s" % (self.settings.build_type, "DLL" if self.options.shared else "",
-                                    "_fixed" if self.options.shared and self.options.fixed_point else "")
+                                    "_fixed" if self.fixed_point else "")
                 msbuild = MSBuild(self)
                 msbuild.build('opus.sln', build_type=btype, platforms={"x86": "Win32"})
         else:
@@ -69,7 +76,8 @@ class OpusConan(ConanFile):
                         tools.replace_in_file("configure", r"-install_name \$rpath/", "-install_name ")
 
                     if self.settings.os == "Windows":
-                        tools.run_in_windows_bash(self, "./configure%s" % (" --enable-fixed-point" if self.options.fixed_point else ""))
+                        tools.run_in_windows_bash(self, "./configure%s" % (
+                        " --enable-fixed-point" if self.options.fixed_point else ""))
                         tools.run_in_windows_bash(self, "make")
                     else:
                         configure_options = " --prefix=%s" % os.path.join(self.build_folder, self.install_subfolder)
