@@ -30,15 +30,14 @@ class OpusConan(ConanFile):
                 (self.settings.compiler != "Visual Studio" or int(str(self.settings.compiler.version)) < 14):
             raise tools.ConanException("On Windows, the opus package can only be built with the "
                                        "Visual Studio 2015 or higher.")
+        if self.settings.compiler == "Visual Studio" and not self.options.shared:
+            self.options.remove("fixed_point")
 
     def config_options(self):
         del self.settings.compiler.libcxx
 
         if self.settings.os == "Windows":
             self.options.remove("fPIC")
-
-        if self.settings.compiler == "Visual Studio" and not self.options.shared:
-            self.options.remove("fixed_point")
 
     def source(self):
         source_url = "https://archive.mozilla.org/pub/opus"
