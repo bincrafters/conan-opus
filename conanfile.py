@@ -26,7 +26,8 @@ class OpusConan(ConanFile):
     install_subfolder = "install"
 
     def configure(self):
-        if self.settings.os == "Windows" and (self.settings.compiler != "Visual Studio" or int(str(self.settings.compiler.version)) < 14):
+        if self.settings.os == "Windows" and \
+                (self.settings.compiler != "Visual Studio" or int(str(self.settings.compiler.version)) < 14):
             raise tools.ConanException("On Windows, the opus package can only be built with the "
                                        "Visual Studio 2015 or higher.")
 
@@ -51,66 +52,54 @@ class OpusConan(ConanFile):
             return False
         return self.options.fixed_point
 
+    def build_msvc(self):
+        with tools.chdir(self.source_subfolder):
+            pc_build = 'fixed-point' if self.fixed_point else 'floating-point'
+            shutil.copy('opus.pc.in', 'opus.pc')
+            tools.replace_in_file('opus.pc', '@VERSION@', self.version)
+            tools.replace_in_file('opus.pc', '@PC_BUILD@', pc_build)
+        with tools.chdir(os.path.join(self.source_subfolder, "win32", "VS2015")):
+            btype = "%s%s%s" % (self.settings.build_type, "DLL" if self.options.shared else "",
+                                "_fixed" if self.fixed_point else "")
+            msbuild = MSBuild(self)
+            msbuild.build('opus.sln', build_type=btype, platforms={"x86": "Win32"})
+
+    def build_configure(self):
+        def chmod_plus_x(filename):
+            if os.name == 'posix':
+                os.chmod(filename, os.stat(filename).st_mode | 0o111)
+
+        with tools.chdir(self.source_subfolder):
+            if self.settings.os == "Macos":
+                tools.replace_in_file("configure", r"-install_name \$rpath/", "-install_name ")
+            chmod_plus_x('configure')
+            if self.options.shared:
+                args = ['--disable-static', '--enable-shared']
+            else:
+                args = ['--disable-shared', '--enable-static']
+            args.append('--enable-fixed-point' if self.fixed_point else '--disable-fixed-point')
+            env_build = AutoToolsBuildEnvironment(self)
+            env_build.configure(args=args)
+            env_build.make()
+            env_build.install()
+
     def build(self):
         if self.settings.compiler == "Visual Studio":
-            with tools.chdir(self.source_subfolder):
-                pc_build = 'fixed-point' if self.fixed_point else 'floating-point'
-                shutil.copy('opus.pc.in', 'opus.pc')
-                tools.replace_in_file('opus.pc', '@VERSION@', self.version)
-                tools.replace_in_file('opus.pc', '@PC_BUILD@', pc_build)
-            with tools.chdir(os.path.join(self.source_subfolder, "win32", "VS2015")):
-                btype = "%s%s%s" % (self.settings.build_type, "DLL" if self.options.shared else "",
-                                    "_fixed" if self.fixed_point else "")
-                msbuild = MSBuild(self)
-                msbuild.build('opus.sln', build_type=btype, platforms={"x86": "Win32"})
+            self.build_msvc()
         else:
-            env = AutoToolsBuildEnvironment(self)
-
-            if self.settings.os != "Windows":
-                env.fpic = self.options.fPIC
-
-            with tools.environment_append(env.vars):
-
-                with tools.chdir(self.source_subfolder):
-                    if self.settings.os == "Macos":
-                        tools.replace_in_file("configure", r"-install_name \$rpath/", "-install_name ")
-
-                    if self.settings.os == "Windows":
-                        tools.run_in_windows_bash(self, "./configure%s" % (
-                        " --enable-fixed-point" if self.options.fixed_point else ""))
-                        tools.run_in_windows_bash(self, "make")
-                    else:
-                        configure_options = " --prefix=%s" % os.path.join(self.build_folder, self.install_subfolder)
-                        if self.options.fixed_point:
-                            configure_options += " --enable-fixed-point"
-                        if self.options.shared:
-                            configure_options += " --disable-static --enable-shared"
-                        else:
-                            configure_options += " --disable-shared --enable-static"
-                        self.run("chmod +x configure")
-                        self.run("./configure%s" % configure_options)
-                        self.run("make")
-                        self.run("make install")
+            self.build_configure()
 
     def package(self):
-        if self.settings.os == "Windows":
-            base_folder = self.source_subfolder
-        else:
-            base_folder = self.install_subfolder
-        inc_dir = os.path.join(base_folder, "include")
-        lib_dir = os.path.join(base_folder, "lib")
         self.copy("FindOPUS.cmake", ".", ".")
         self.copy("COPYING", dst="licenses", src=self.source_subfolder, keep_path=False)
-        self.copy(pattern="*", dst="include", src=inc_dir, keep_path=False)
-        self.copy(pattern="*.dll", dst="bin", src=base_folder, keep_path=False)
-        self.copy(pattern="*.lib", dst="lib", src=base_folder, keep_path=False)
-        self.copy(pattern="*.a", dst="lib", src=lib_dir, keep_path=False)
-        self.copy(pattern="*.so*", dst="lib", src=lib_dir, keep_path=False)
-        self.copy(pattern="*.dylib", dst="lib", src=lib_dir, keep_path=False)
-        self.copy("*.pc", dst=os.path.join("lib, pkgconfig"), src=os.path.join(base_folder, "lib", "pkgconfig"))
         if self.settings.compiler == 'Visual Studio':
-            self.copy("*.pc", dst=os.path.join("lib, pkgconfig"), src=base_folder)
-        self.copy(pattern="**.pdb", dst="bin", keep_path=False)
+            self.copy(pattern="*", dst=os.path.join("include", "opus"),
+                      src=os.path.join(self.source_subfolder, "include"), keep_path=False)
+            self.copy(pattern="*.dll", dst="bin", src=self.source_subfolder, keep_path=False)
+            self.copy(pattern="*.lib", dst="lib", src=self.source_subfolder, keep_path=False)
+            self.copy("*.pc", dst=os.path.join("lib, pkgconfig"), src=self.source_subfolder)
+            self.copy(pattern="**.pdb", dst="bin", keep_path=False)
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
+        self.cpp_info.includedirs.append(os.path.join('include', 'opus'))
