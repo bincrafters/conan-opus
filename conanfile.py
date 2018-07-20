@@ -26,6 +26,8 @@ class OpusConan(ConanFile):
     install_subfolder = "install"
 
     def configure(self):
+        del self.settings.compiler.libcxx
+
         if self.settings.os == "Windows" and \
                 (self.settings.compiler != "Visual Studio" or int(str(self.settings.compiler.version)) < 14):
             raise tools.ConanException("On Windows, the opus package can only be built with the "
@@ -34,8 +36,6 @@ class OpusConan(ConanFile):
             self.options.remove("fixed_point")
 
     def config_options(self):
-        del self.settings.compiler.libcxx
-
         if self.settings.os == "Windows":
             self.options.remove("fPIC")
 
@@ -57,6 +57,11 @@ class OpusConan(ConanFile):
             shutil.copy('opus.pc.in', 'opus.pc')
             tools.replace_in_file('opus.pc', '@VERSION@', self.version)
             tools.replace_in_file('opus.pc', '@PC_BUILD@', pc_build)
+            tools.replace_in_file('opus.pc', '@LIBM@', '')
+            tools.replace_in_file('opus.pc', '@prefix@', os.path.abspath(self.package_folder))
+            tools.replace_in_file('opus.pc', '@exec_prefix@', '${prefix}')
+            tools.replace_in_file('opus.pc', '@libdir@', '${exec_prefix}/lib')
+            tools.replace_in_file('opus.pc', '@includedir@', '${prefix}/include')
         with tools.chdir(os.path.join(self.source_subfolder, "win32", "VS2015")):
             btype = "%s%s%s" % (self.settings.build_type, "DLL" if self.options.shared else "",
                                 "_fixed" if self.fixed_point else "")
@@ -96,9 +101,11 @@ class OpusConan(ConanFile):
                       src=os.path.join(self.source_subfolder, "include"), keep_path=False)
             self.copy(pattern="*.dll", dst="bin", src=self.source_subfolder, keep_path=False)
             self.copy(pattern="*.lib", dst="lib", src=self.source_subfolder, keep_path=False)
-            self.copy("*.pc", dst=os.path.join("lib, pkgconfig"), src=self.source_subfolder)
+            self.copy("*.pc", dst=os.path.join("lib", "pkgconfig"), src=self.source_subfolder)
             self.copy(pattern="**.pdb", dst="bin", keep_path=False)
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
+        if self.settings.os == 'Linux':
+            self.cpp_info.libs.append('m')
         self.cpp_info.includedirs.append(os.path.join('include', 'opus'))
