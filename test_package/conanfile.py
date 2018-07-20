@@ -16,10 +16,11 @@ class TestPackageConan(ConanFile):
 
     def test(self):
         with tools.environment_append(RunEnvironment(self).vars):
+            pcm_path = os.path.join(self.source_folder, "test.pcm")
             bin_path = os.path.join("bin", "test_package")
             if self.settings.os == "Windows":
-                self.run(bin_path)
+                self.run("%s %s out.pcm" % (bin_path, pcm_path))
             elif self.settings.os == "Macos":
-                self.run("DYLD_LIBRARY_PATH=%s %s" % (os.environ.get('DYLD_LIBRARY_PATH', ''), bin_path))
+                self.run("DYLD_LIBRARY_PATH=%s %s %s out.pcm" % (os.environ.get('DYLD_LIBRARY_PATH', ''), bin_path, pcm_path))
             else:
-                self.run("LD_LIBRARY_PATH=%s %s" % (os.environ.get('LD_LIBRARY_PATH', ''), bin_path))
+                self.run("LD_LIBRARY_PATH=%s %s %s out.pcm" % (os.environ.get('LD_LIBRARY_PATH', ''), bin_path, pcm_path))
