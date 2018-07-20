@@ -96,7 +96,7 @@ class OpusConan(ConanFile):
                       src=os.path.join(self.source_subfolder, "include"), keep_path=False)
             self.copy(pattern="*.dll", dst="bin", src=self.source_subfolder, keep_path=False)
             self.copy(pattern="*.lib", dst="lib", src=self.source_subfolder, keep_path=False)
-            self.copy("*.pc", dst=os.path.join("lib, pkgconfig"), src=self.source_subfolder)
+            self.copy("*.pc", dst=os.path.join("lib", "pkgconfig"), src=self.source_subfolder)
             self.copy(pattern="**.pdb", dst="bin", keep_path=False)
 
     def package_info(self):
