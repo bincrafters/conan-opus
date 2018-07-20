@@ -58,6 +58,10 @@ class OpusConan(ConanFile):
             tools.replace_in_file('opus.pc', '@VERSION@', self.version)
             tools.replace_in_file('opus.pc', '@PC_BUILD@', pc_build)
             tools.replace_in_file('opus.pc', '@LIBM@', '')
+            tools.replace_in_file('opus.pc', '@prefix@', os.path.abspath(self.package_folder))
+            tools.replace_in_file('opus.pc', '@exec_prefix@', '${prefix}')
+            tools.replace_in_file('opus.pc', '@libdir@', '${exec_prefix}/lib')
+            tools.replace_in_file('opus.pc', '@includedir@', '${prefix}/include')
         with tools.chdir(os.path.join(self.source_subfolder, "win32", "VS2015")):
             btype = "%s%s%s" % (self.settings.build_type, "DLL" if self.options.shared else "",
                                 "_fixed" if self.fixed_point else "")
