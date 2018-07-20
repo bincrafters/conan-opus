@@ -57,6 +57,7 @@ class OpusConan(ConanFile):
             shutil.copy('opus.pc.in', 'opus.pc')
             tools.replace_in_file('opus.pc', '@VERSION@', self.version)
             tools.replace_in_file('opus.pc', '@PC_BUILD@', pc_build)
+            tools.replace_in_file('opus.pc', '@LIBM@', '')
         with tools.chdir(os.path.join(self.source_subfolder, "win32", "VS2015")):
             btype = "%s%s%s" % (self.settings.build_type, "DLL" if self.options.shared else "",
                                 "_fixed" if self.fixed_point else "")
