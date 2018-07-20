@@ -26,6 +26,8 @@ class OpusConan(ConanFile):
     install_subfolder = "install"
 
     def configure(self):
+        del self.settings.compiler.libcxx
+
         if self.settings.os == "Windows" and \
                 (self.settings.compiler != "Visual Studio" or int(str(self.settings.compiler.version)) < 14):
             raise tools.ConanException("On Windows, the opus package can only be built with the "
@@ -34,8 +36,6 @@ class OpusConan(ConanFile):
             self.options.remove("fixed_point")
 
     def config_options(self):
-        del self.settings.compiler.libcxx
-
         if self.settings.os == "Windows":
             self.options.remove("fPIC")
 
