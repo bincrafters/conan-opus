@@ -44,6 +44,13 @@ class OpusConan(ConanFile):
         tools.get("{0}/{1}-{2}.tar.gz".format(source_url, self.name, self.version))
         extracted_dir = self.name + "-" + self.version
         os.rename(extracted_dir, self.source_subfolder)
+        # exclude opus_compare.c from build (it has main function)
+        with tools.chdir(os.path.join(self.source_subfolder, 'win32', 'VS2015')):
+            tools.replace_in_file('opus.vcxproj',
+                                  '    <ClCompile Include="..\\..\\src\\opus_compare.c">\n'
+                                  '      <DisableSpecificWarnings>4244;%(DisableSpecificWarnings)'
+                                  '</DisableSpecificWarnings>\n'
+                                  '    </ClCompile>\n', '')
 
     @property
     def fixed_point(self):
