@@ -24,9 +24,7 @@ class OpusConan(ConanFile):
     options = {"shared": [True, False], "fPIC": [True, False], "fixed_point": [True, False]}
     default_options = {'shared': False, 'fPIC': True, 'fixed_point': False}
 
-    # Custom attributes for Bincrafters recipe conventions
-    _source_subfolder = "sources"
-    _install_subfolder = "install"
+    _source_subfolder = "source_subfolder"
 
     def configure(self):
         del self.settings.compiler.libcxx
