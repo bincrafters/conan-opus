@@ -18,6 +18,7 @@ class OpusConan(ConanFile):
     homepage = "https://opus-codec.org"
     exports = ["LICENSE.md"]
     exports_sources = ["CMakeLists.txt","FindOPUS.cmake","opus_buildtype.cmake"]
+    generators = "cmake"
 
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False], "fPIC": [True, False], "fixed_point": [True, False]}
