@@ -17,7 +17,7 @@ class OpusConan(ConanFile):
     license = "BSD-3-Clause"
     homepage = "https://opus-codec.org"
     exports = ["LICENSE.md"]
-    exports_sources = ["FindOPUS.cmake","opus_buildtype.cmake"]
+    exports_sources = ["CMakeLists.txt","FindOPUS.cmake","opus_buildtype.cmake"]
 
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False], "fPIC": [True, False], "fixed_point": [True, False]}
@@ -48,12 +48,11 @@ class OpusConan(ConanFile):
         os.rename(extracted_dir, self._source_subfolder)
         # They forgot to package that file into the tarball for 1.3.1
         # See https://github.com/xiph/opus/issues/129
-        os.rename("opus_buildtype.cmake", self._source_subfolder + "/opus_buildtype.cmake")
+        os.rename("opus_buildtype.cmake", os.path.join(self._source_subfolder , "opus_buildtype.cmake"))
 
     def _configure_cmake(self):
         cmake = CMake(self)
         cmake.definitions["OPUS_FIXED_POINT"] = self.options.fixed_point
-        cmake.definitions["BUILD_SHARED_LIBS"] = self.options.shared
         cmake.configure(source_folder=self._source_subfolder)
         return cmake
 
