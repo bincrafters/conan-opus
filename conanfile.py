@@ -53,7 +53,7 @@ class OpusConan(ConanFile):
     def _configure_cmake(self):
         cmake = CMake(self)
         cmake.definitions["OPUS_FIXED_POINT"] = self.options.fixed_point
-        cmake.configure(source_folder=self._source_subfolder)
+        cmake.configure()
         return cmake
 
     def build(self):
