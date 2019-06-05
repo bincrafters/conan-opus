@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from conans import ConanFile, tools, AutoToolsBuildEnvironment, MSBuild, CMake
+from conans import ConanFile, tools, CMake
 import os
 import shutil
 
