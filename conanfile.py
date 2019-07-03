@@ -41,8 +41,8 @@ class OpusConan(ConanFile):
 
     def source(self):
         source_url = "https://archive.mozilla.org/pub/opus"
-        tools.get("{0}/{1}-{2}.tar.gz".format(source_url, self.name, self.version),
-                  sha256="65b58e1e25b2a114157014736a3d9dfeaad8d41be1c8179866f144a2fb44ff9d")
+        url = "{0}/{1}-{2}.tar.gz".format(source_url, self.name, self.version)
+        tools.get(url, sha256="65b58e1e25b2a114157014736a3d9dfeaad8d41be1c8179866f144a2fb44ff9d")
         extracted_dir = self.name + "-" + self.version
         os.rename(extracted_dir, self._source_subfolder)
         # They forgot to package that file into the tarball for 1.3.1
