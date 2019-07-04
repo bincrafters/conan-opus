@@ -1,45 +1,67 @@
-## Package Status
+[![Download](https://api.bintray.com/packages/bincrafters/public-conan/opus%3Abincrafters/images/download.svg) ](https://bintray.com/bincrafters/public-conan/opus%3Abincrafters/_latestVersion)
+[![Build Status Travis](https://travis-ci.com/bincrafters/conan-opus.svg?branch=stable%2F1.3.1)](https://travis-ci.com/bincrafters/conan-opus)
+[![Build Status AppVeyor](https://ci.appveyor.com/api/projects/status/github/bincrafters/conan-opus?branch=stable%2F1.3.1&svg=true)](https://ci.appveyor.com/project/bincrafters/conan-opus)
 
-| Bintray | Windows | Linux & macOS |
-|:--------:|:---------:|:-----------------:|
-|[![Download](https://api.bintray.com/packages/bincrafters/public-conan/opus%3Abincrafters/images/download.svg) ](https://bintray.com/bincrafters/public-conan/opus%3Abincrafters/_latestVersion)| [![Build status](https://ci.appveyor.com/api/projects/status/github/bincrafters/conan-opus?svg=true)](https://ci.appveyor.com/project/bincrafters/conan-opus)| [![Build Status](https://travis-ci.com/bincrafters/conan-opus.svg?branch=stable%2F1.2.1)](https://travis-ci.com/bincrafters/conan-opus)|
+## Conan package recipe for [*opus*](https://opus-codec.org)
 
-## Conan.io Information
+Opus is a totally open, royalty-free, highly versatile audio codec.
 
-Bincrafters packages can be found in the following public Conan repository:
+The packages generated with this **conanfile** can be found on [Bintray](https://bintray.com/bincrafters/public-conan/opus%3Abincrafters).
 
-[Bincrafters Public Conan Repository on Bintray](https://bintray.com/bincrafters/public-conan)
-
-*Note: You can click the "Set Me Up" button on the Bintray page above for instructions on using packages from this repository.*
 
 ## Issues
 
-If you wish to report an issue or make a request for a Bincrafters package, please do so here:
+If you wish to report an issue or make a request for a package, please do so here:
 
-[Bincrafters Community Issues](https://github.com/bincrafters/community/issues)
+[Issues Tracker](https://github.com/bincrafters/community/issues)
 
-## General Information
 
-This GIT repository is managed by the Bincrafters team and holds files related to Conan.io.  For detailed information about Bincrafters and Conan.io, please visit the following resources:
+## For Users
 
-[Bincrafters Wiki - Common README](https://github.com/bincrafters/community/wiki/Common-README.md)
+### Basic setup
 
-[Bincrafters Technical Documentation](http://bincrafters.readthedocs.io/en/latest/)
+    $ conan install opus/1.3.1@bincrafters/stable
 
-[Bincrafters Blog](https://bincrafters.github.io)
+### Project setup
 
-## License Information
+If you handle multiple dependencies in your project is better to add a *conanfile.txt*
 
-Bincrafters packages are hosted on [Bintray](https://bintray.com) and contain Open-Source software which is licensed by the software's maintainers and NOT Bincrafters.  For each Open-Source package published by Bincrafters, the packaging process obtains the required license files along with the original source files from the maintainer, and includes these license files in the generated Conan packages.
+    [requires]
+    opus/1.3.1@bincrafters/stable
 
-The contents of this GIT repository are completely separate from the software being packaged and therefor licensed separately.  The license for all files contained in this GIT repository are defined in the [LICENSE.md](LICENSE.md) file in this repository.  The licenses included with all Conan packages published by Bincrafters can be found in the Conan package directories in the following locations, relative to the Conan Cache root (`~/.conan` by default):
+    [generators]
+    cmake
 
-### License(s) for packaged software:
+Complete the installation of requirements for your project running:
 
-    ~/.conan/data/<pkg_name>/<pkg_version>/bincrafters/package/<random_package_id>/license/<LICENSE_FILES_HERE>
+    $ mkdir build && cd build && conan install ..
 
-*Note :   The most common filenames for OSS licenses are `LICENSE` AND `COPYING` without file extensions.*
+Note: It is recommended that you run conan install from a build directory and not the root of the project directory.  This is because conan generates *conanbuildinfo* files specific to a single build configuration which by default comes from an autodetected default profile located in ~/.conan/profiles/default .  If you pass different build configuration options to conan install, it will generate different *conanbuildinfo* files.  Thus, they should not be added to the root of the project, nor committed to git.
 
-### License for Bincrafters recipe:
 
-    ~/.conan/data/<pkg_name>/<pkg_version>/bincrafters/export/LICENSE.md
+## Build and package
+
+The following command both runs all the steps of the conan file, and publishes the package to the local system cache.  This includes downloading dependencies from "build_requires" and "requires" , and then running the build() method.
+
+    $ conan create . bincrafters/stable
+
+
+### Available Options
+| Option        | Default | Possible Values  |
+| ------------- |:----------------- |:------------:|
+| shared      | False |  [True, False] |
+| fPIC      | True |  [True, False] |
+| fixed_point      | False |  [True, False] |
+
+
+## Add Remote
+
+    $ conan remote add bincrafters "https://api.bintray.com/conan/bincrafters/public-conan"
+
+
+## Conan Recipe License
+
+NOTE: The conan recipe license applies only to the files of this recipe, which can be used to build and package opus.
+It does *not* in any way apply or is related to the actual software being packaged.
+
+[MIT](https://github.com/bincrafters/conan-opus/blob/stable/1.3.1/LICENSE.md)
