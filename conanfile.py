@@ -30,7 +30,7 @@ class OpusConan(ConanFile):
         del self.settings.compiler.libcxx
 
         if self.settings.os == "Windows" and \
-                (self.settings.compiler != "Visual Studio" or int(str(self.settings.compiler.version)) < 14):
+                (self.settings.compiler == "Visual Studio" and int(str(self.settings.compiler.version)) < 14):
             raise tools.ConanException("On Windows, the opus package can only be built with the "
                                        "Visual Studio 2015 or higher.")
 
@@ -69,4 +69,6 @@ class OpusConan(ConanFile):
         self.cpp_info.libs = tools.collect_libs(self)
         if self.settings.os == 'Linux':
             self.cpp_info.libs.append('m')
+        if self.settings.os == "Windows" and self.settings.compiler != "Visual Studio":
+            self.cpp_info.libs.append("ssp")
         self.cpp_info.includedirs.append(os.path.join('include', 'opus'))
