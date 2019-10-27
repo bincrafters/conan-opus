@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 from conans import ConanFile, tools, CMake
 import os
 import shutil
@@ -28,6 +25,7 @@ class OpusConan(ConanFile):
 
     def configure(self):
         del self.settings.compiler.libcxx
+        del self.settings.compiler.cppstd
 
         if self.settings.os == "Windows" and \
                 (self.settings.compiler == "Visual Studio" and int(str(self.settings.compiler.version)) < 14):
