@@ -65,7 +65,7 @@ class OpusConan(ConanFile):
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
-        if self.settings.os == 'Linux':
+        if self.settings.os == 'Linux' or self.settings.os == "Android":
             self.cpp_info.libs.append('m')
         if self.settings.os == "Windows" and self.settings.compiler != "Visual Studio":
             self.cpp_info.libs.append("ssp")
