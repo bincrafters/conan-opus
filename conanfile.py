@@ -5,15 +5,11 @@ import shutil
 
 class OpusConan(ConanFile):
     name = "opus"
-    version = "1.3.1"
-    url = "https://opus-codec.org/"
     description = "Opus is a totally open, royalty-free, highly versatile audio codec."
-    author = "Bincrafters <bincrafters@gmail.com>"
     topics = ("conan", "opus", "audio", "decoder", "decoding", "multimedia", "sound")
-
-    license = "BSD-3-Clause"
+    url = "https://github.com/bincrafters/conan-opus"
     homepage = "https://opus-codec.org"
-    exports = ["LICENSE.md"]
+    license = "BSD-3-Clause"
     exports_sources = ["CMakeLists.txt","FindOPUS.cmake","opus_buildtype.cmake"]
     generators = "cmake"
 
@@ -38,11 +34,10 @@ class OpusConan(ConanFile):
 
 
     def source(self):
-        source_url = "https://archive.mozilla.org/pub/opus"
-        url = "{0}/{1}-{2}.tar.gz".format(source_url, self.name, self.version)
-        tools.get(url, sha256="65b58e1e25b2a114157014736a3d9dfeaad8d41be1c8179866f144a2fb44ff9d")
+        tools.get(**self.conan_data["sources"][self.version])
         extracted_dir = self.name + "-" + self.version
         os.rename(extracted_dir, self._source_subfolder)
+
         # They forgot to package that file into the tarball for 1.3.1
         # See https://github.com/xiph/opus/issues/129
         os.rename("opus_buildtype.cmake", os.path.join(self._source_subfolder , "opus_buildtype.cmake"))
